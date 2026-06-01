@@ -1054,6 +1054,8 @@ function convertNamedImportsToObject(node: any, pattern?: boolean, kind: "dynami
 // {...foo} is a special case.
 function convertObjectToJSXAttributes(obj: ObjectExpression)
   parts := [] // JSX attributes
+  if getConfig().tsrx
+    parts.push "/*tsrx*/"
   rest := []  // parts that need to be in {...rest} form
   for part, i of obj.properties
     if part.usesRef
