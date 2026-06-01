@@ -189,6 +189,7 @@ import {
 
 import {
   getConfig
+  getFilename
   getState
   getSync
 } from ../parser.hera
@@ -2050,6 +2051,43 @@ async function processProgramAsync(root: BlockStatement): Promise<void>
   // Called only if we're in async mode
   { expressions: statements } := root
   await processComptime(statements)
+  await checkTSRX(root)
+
+// TSRX: when directive set, send jsx elements to @tsrx/core parser to verify parsing
+// parse only as of now
+async function checkTSRX(root: BlockStatement): Promise<void>
+  return unless getConfig().tsrx
+
+  // @tsrx/core is esm only so import it dynamically, the cjs
+  // build/test path must not require an ES module.
+  { parseModule } := await import("@tsrx/core")
+  filename := getFilename() ?? "unknown.tsrx"
+
+  // gatherRecursive stops recursing once the predicate matches, so this
+  // yields only the outermost JSX nodes; nested JSX is part of the same
+  // reconstructed source.
+  jsxNodes := gatherRecursive root, (node: ASTNodeObject) =>
+    node.type is "JSXElement" or node.type is "JSXFragment"
+
+  for each node of jsxNodes
+    source := flattenTokens(node).trim()
+    continue unless source
+    try
+      parseModule source, filename
+    catch e
+      throw new Error `tsrx failed to parse JSX in ${filename}: ${(e as any)?.message ?? e}\n${source}`
+
+// reconstruct source text of AST subtree by concatenating its leaf
+// tokens. feed JSX back to tsrx parser.
+function flattenTokens(node: ASTNode): string
+  return node if node <? "string"
+  return "" unless node?
+  return node.map(flattenTokens).join("") if Array.isArray node
+  if node <? "object"
+    { token, children } := node as any
+    return token if token <? "string"
+    return flattenTokens children if children?
+  return ""
 
 function processRepl(root: BlockStatement, rootIIFE: ASTNode): void
   topBlock :=

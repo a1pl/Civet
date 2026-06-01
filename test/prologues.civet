@@ -1,4 +1,4 @@
-{testCase} from ./helper.civet
+{testCase, throws} from ./helper.civet
 
 describe "prologues", ->
   testCase """
@@ -37,6 +37,22 @@ describe "prologues", ->
     x = 1
     ---
     x = 1
+  """
+
+  testCase """
+    tsrx directive parses JSX through tsrx, leaving output unchanged
+    ---
+    "civet tsrx"
+    x := <div class="a">hi</div>
+    ---
+    const x = <div class="a">hi</div>
+  """, wrapper: ""
+
+  throws """
+    tsrx directive reports JSX that tsrx cannot parse
+    ---
+    "civet tsrx"
+    x := <div>hi {y}</div>
   """
 
 describe "shebang", ->
