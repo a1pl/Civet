@@ -2284,7 +2284,6 @@ function reorderBindingRestProperty(props: any)
     rest.children = [ ...rest.children.slice(0, -1), rest.delim ]
 
   children := [...props, ...after, rest]
-
   if restCount > 1
     children.push
       type: "Error",
