@@ -41,7 +41,7 @@ Goal: prove the flag is visible where JSX is emitted.
 
 Goal: smallest real round-trip.
 
-7. Link tsrx as a workspace dep in `package.json` (in-repo at `tsrx/`, not npm).
+7. Add dep: `pnpm add @tsrx/core` (published on npm). NOT the in-repo `tsrx/` copy — it's absent from `pnpm-workspace.yaml` and its deps use Ripple's `catalog:default`, so it won't resolve here. In-repo `tsrx/` = source reference only.
 8. When `config.tsrx`, extract the JSX source span (use AST node `loc` + exact source slice) and feed it to tsrx `parseModule(src, filename)`.
 9. tsrx returns an ESTree AST only — so emit the JSX unchanged for now; just prove parse succeeds (assert no throw / debug marker).
 
@@ -63,7 +63,7 @@ Goal: actually emit tsrx runtime output.
 
 - **Source maps**: splicing tsrx output breaks Civet's offset mapping. Defer to Phase 3 with `convertSourceMapToMappings`.
 - **Span extraction**: need exact JSX source slice + offset; verify Civet AST nodes carry usable `loc` before feeding tsrx.
-- **Dep wiring**: tsrx is in-repo (`tsrx/`); link as workspace, never npm.
+- **Dep wiring**: use npm `@tsrx/core`. In-repo `tsrx/` is not a workspace pkg and uses Ripple's pnpm catalog — don't link it.
 
 ## Workflow
 
@@ -77,4 +77,4 @@ Goal: actually emit tsrx runtime output.
 - `source/main.civet` — public ParseOptions
 - `types/types.d.ts` — option type decls
 - `test/prologues.civet`, `test/jsx/` — tests
-- `tsrx/` — in-repo tsrx core (`parseModule`, scope analysis, source-map utils)
+- `@tsrx/core` (npm) — tsrx core (`parseModule`, scope analysis, source-map utils). In-repo `tsrx/` mirrors it for reference.
