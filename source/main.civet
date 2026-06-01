@@ -91,6 +91,7 @@ export type CompilerOptions
   trace?: string
   parseOptions?:
     coffeeCompat?: boolean
+    tsrx?: boolean
     comptime?: boolean
     globals?: string[]?
     esArrowFunction?: boolean

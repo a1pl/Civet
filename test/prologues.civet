@@ -30,6 +30,15 @@ describe "prologues", ->
     x = 1
   """
 
+  testCase """
+    tsrx directive is consumed with no output change
+    ---
+    "civet tsrx"
+    x = 1
+    ---
+    x = 1
+  """
+
 describe "shebang", ->
   testCase """
     keeps it at the top

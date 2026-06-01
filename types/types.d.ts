@@ -37,6 +37,7 @@ declare module "@danielx/civet" {
     operators: string[] | Record<string, string | undefined>
     react: boolean
     solid: boolean
+    tsrx: boolean
     client: boolean
     rewriteCivetImports: string
     rewriteTsImports: boolean
