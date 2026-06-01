@@ -9724,6 +9724,7 @@ Reset
       objectIs: false,
       react: false,
       solid: false,
+      tsrx: false,
       client: false, // default behavior: client only
       repl: false,
       rewriteTsImports: true,
